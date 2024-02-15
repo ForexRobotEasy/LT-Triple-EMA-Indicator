@@ -1,0 +1,64 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                            LT Triple EMA Indicator|
+//|                                      https://forexroboteasy.com   |
+//|                                          Forex Robot Easy Team    |
+//+------------------------------------------------------------------+
+#property indicator_chart_window
+#property indicator_buffers 2
+#property indicator_color1 Blue
+#property indicator_color2 Red
+
+input int EMA_Period1 = 10;
+input int EMA_Period2 = 20;
+input int EMA_Period3 = 50;
+
+double EMA_Buffer1[];
+double EMA_Buffer2[];
+double EMA_Buffer3[];
+
+//+------------------------------------------------------------------+
+//| Custom indicator initialization function                         |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+   IndicatorBuffers(2);
+   SetIndexBuffer(0, EMA_Buffer1);
+   SetIndexBuffer(1, EMA_Buffer2);
+   SetIndexBuffer(2, EMA_Buffer3);
+   SetIndexStyle(0, DRAW_LINE);
+   SetIndexStyle(1, DRAW_LINE);
+   SetIndexStyle(2, DRAW_LINE);
+   SetIndexLabel(0, 'EMA1');
+   SetIndexLabel(1, 'EMA2');
+   SetIndexLabel(2, 'EMA3');
+   return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Custom indicator iteration function                              |
+//+------------------------------------------------------------------+
+int OnCalculate(const int rates_total,
+                const int prev_calculated,
+                const datetime &time[],
+                const double &open[],
+                const double &high[],
+                const double &low[],
+                const double &close[],
+                const long &tick_volume[],
+                const long &volume[],
+                const int &spread[])
+{
+   int limit = rates_total - prev_calculated;
+   if (limit <= 0)
+      return 0;
+
+   for (int i = 0; i < limit; i++)
+   {
+      EMA_Buffer1[i] = iMA(NULL, 0, EMA_Period1, 0, MODE_EMA, PRICE_CLOSE, i);
+      EMA_Buffer2[i] = iMA(NULL, 0, EMA_Period2, 0, MODE_EMA, PRICE_CLOSE, i);
+      EMA_Buffer3[i] = iMA(NULL, 0, EMA_Period3, 0, MODE_EMA, PRICE_CLOSE, i);
+   }
+
+   return(rates_total);
+}
